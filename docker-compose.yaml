@@ -17,25 +17,59 @@ services:
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
   
-  flask:
-    build: ./flask
+  flask-server:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile.flask
     ports:
       - "5000:5000"
     environment:
       - FLASK_ENV=development
+      - FLASK_APP=app.py
+    privileged: true
+    devices:
+      - "/dev/cpu:/dev/cpu"
+    networks:
+      - app-network
 
-  express:
-    build: ./express
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
+  flask-requests:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile.requests
+    depends_on:
+      - flask-server
+    networks:
+      - app-network
+    privileged: true
+    volumes:
+      - ./flask:/flask
+    init: true
+    devices:
+      - "/dev/cpu:/dev/cpu"
 
-  springboot:
-    build: ./springboot
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
+networks:
+  app-network:
+    driver: bridge
+
+  # express:
+  #   build: ./express
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #   privileged: true
+  #   devices:
+  #     - "/dev/cpu:/dev/cpu"
+
+  # springboot:
+  #   build: ./springboot
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
+  #     SPRING_DATASOURCE_USERNAME: root
+  #     SPRING_DATASOURCE_PASSWORD: password
+  #   privileged: true
+  #   devices:
+  #     - "/dev/cpu:/dev/cpu"
+  #   command: mvn clean package && java -jar target/*.jar

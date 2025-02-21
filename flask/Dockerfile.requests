@@ -1,0 +1,54 @@
+### Build Stage: Compile the Rust Binary ###
+FROM rust:latest AS builder
+
+ENV RUST_BACKTRACE=1
+
+# Set working directory
+WORKDIR /energi_bridge
+
+# Clone the repository
+RUN git clone https://github.com/tdurieux/EnergiBridge.git .
+
+# Build the Rust project in release mode
+RUN cargo build --release
+
+# Extract the compiled binary
+RUN cp target/release/energibridge /EnergiBridge
+
+
+### Final Stage: Python and Flask ###
+FROM python:3.9 AS app
+
+# Set the working directory in the container
+WORKDIR /flask
+
+USER root
+
+# Install required system dependencies
+RUN apt-get update && apt-get install -y libcap2-bin
+RUN apt-get update && apt-get install -y libstdc++6 libc6
+
+# Copy the current directory contents into the container
+COPY . .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Clone and install the pyEnergiBridge library
+RUN git clone https://github.com/luiscruz/pyEnergiBridge.git /pyEnergiBridge && \
+    pip install /pyEnergiBridge
+
+# Copy the compiled Rust binary from the builder stage
+COPY --from=builder /EnergiBridge /usr/local/bin/EnergiBridge
+
+# Ensure the binary is executable and has the right caps set
+RUN chmod +x /usr/local/bin/EnergiBridge && \
+    setcap cap_sys_admin,cap_sys_rawio=ep /usr/local/bin/EnergiBridge
+
+# Expose port 5000 for Flask
+EXPOSE 5000
+
+# Command to run the GET requests script
+CMD ["/usr/local/bin/EnergiBridge", "--summary"]
+
+CMD ["python", "make_requests.py"]
