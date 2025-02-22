@@ -18,12 +18,15 @@ services:
       - ./postgres/data:/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
   
-  # flask:
-  #   build: ./flask
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     - FLASK_ENV=development
+  flask:
+    build: ./flask
+    container_name: imdb-flask
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://myuser:mypassword@db:5432/mydatabase
+    ports:
+      - "5000:5000"
 
   # express:
   #   build: ./express
