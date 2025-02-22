@@ -1,12 +1,12 @@
 services:
   db:
-    image: postgres
-    container_name: database
+    image: postgres:latest
+    container_name: imdb-postgres
     restart: always
     environment:
-      POSTGRES_USER: user # change if necessary
-      POSTGRES_PASSWORD: password # change if necessary
-      POSTGRES_DB: mydatabase # change if necessary
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=root
     ports:
       - "5432:5432" 
     healthcheck:
@@ -15,27 +15,28 @@ services:
       timeout: 5s
       retries: 10
     volumes:
+      - ./postgres/data:/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
   
-  flask:
-    build: ./flask
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=development
+  # flask:
+  #   build: ./flask
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - FLASK_ENV=development
 
-  express:
-    build: ./express
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
+  # express:
+  #   build: ./express
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
 
-  springboot:
-    build: ./springboot
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
+  # springboot:
+  #   build: ./springboot
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
+  #     SPRING_DATASOURCE_USERNAME: root
+  #     SPRING_DATASOURCE_PASSWORD: password
