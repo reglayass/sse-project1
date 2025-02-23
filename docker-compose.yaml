@@ -35,11 +35,11 @@ services:
   #   environment:
   #     - NODE_ENV=production
 
-  # springboot:
-  #   build: ./springboot
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
-  #     SPRING_DATASOURCE_USERNAME: root
-  #     SPRING_DATASOURCE_PASSWORD: password
+  springboot:
+    build: ./springboot
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:5432/mydb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
