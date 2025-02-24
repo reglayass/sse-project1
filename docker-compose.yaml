@@ -18,12 +18,12 @@ services:
       - ./postgres/data:/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
   
-  # flask:
-  #   build: ./flask
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     - FLASK_ENV=development
+  flask:
+    build: ./flask
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
 
   express:
     build: ./express
@@ -32,11 +32,11 @@ services:
     environment:
       - NODE_ENV=production
 
-  springboot:
-    build: ./springboot
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:5432/root
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
+  # springboot:
+  #   build: ./springboot
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:5432/mydb
+  #     SPRING_DATASOURCE_USERNAME: root
+  #     SPRING_DATASOURCE_PASSWORD: password
