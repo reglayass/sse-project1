@@ -25,12 +25,12 @@ services:
   #   environment:
   #     - FLASK_ENV=development
 
-  # express:
-  #   build: ./express
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - NODE_ENV=production
+  express:
+    build: ./express
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
 
   springboot:
     build: ./springboot
