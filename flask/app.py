@@ -33,7 +33,7 @@ class Names(db.Model):
         }
 
 class Titles(db.Model):
-    __tablename__ == "title_basics"
+    __tablename__ = "title_basics"
     
     id = db.Column(db.Integer, primary_key=True)
     titletype = db.Column(db.String, nullable=False)
