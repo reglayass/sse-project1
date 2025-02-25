@@ -87,5 +87,3 @@ fi
 end_time=$(date +%s)
 execution_time=$(( (end_time - start_time) / 60 ))
 echo "Total Execution time: $execution_time minutes"
-
-exit 0
