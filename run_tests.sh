@@ -51,7 +51,7 @@ run_test() {
         echo "Test Iteration: $i"
 
         echo "Starting Energibridge for $framework..."
-        (sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1) &
+        sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
 
         # Give it some time to build the container
         echo "Letting Docker start up..."
