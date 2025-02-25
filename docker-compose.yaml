@@ -20,6 +20,7 @@ services:
   
   flask:
     build: ./flask
+    container_name: imdb-flask
     ports:
       - "5000:5000"
     environment:
@@ -27,16 +28,18 @@ services:
 
   express:
     build: ./express
+    container_name: imdb-express
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
 
-  # springboot:
-  #   build: ./springboot
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:5432/mydb
-  #     SPRING_DATASOURCE_USERNAME: root
-  #     SPRING_DATASOURCE_PASSWORD: password
+  springboot:
+    build: ./springboot
+    container_name: imdb-springboot
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:5432/mydb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
