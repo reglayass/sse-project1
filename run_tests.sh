@@ -87,3 +87,5 @@ fi
 end_time=$(date +%s)
 execution_time=$((end_time - start_time))
 echo "Total Execution time: $execution_time seconds"
+
+exit 0

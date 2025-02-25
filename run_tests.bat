@@ -81,3 +81,5 @@ if "%express_test%"=="true" call :run_test "express"
 if "%springboot_test%"=="true" call :run_test "springboot"
 
 echo All tests completed.
+
+exit
