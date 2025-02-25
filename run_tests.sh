@@ -51,19 +51,18 @@ run_test() {
         echo "Test Iteration: $i"
 
         echo "Starting Energibridge for $framework..."
-        sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
-        pid=$! # Capture the process ID of the energibridge background process
+        (sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1) &
 
         # Give it some time to build the container
         echo "Letting Docker start up..."
-        sleep 30
+        sleep 15
 
         # Run artillery test
         echo "Starting Artillery test for $framework..."
-        artillery run "$test_file" > /dev/null 2>&1
+        artillery run --quiet "$test_file"
         # Artillery is done, kill the energibridge process
         echo "Artillery done, killing process..."
-        kill $pid
+        pkill energibridge
         echo "Iteration $i: Process cleanup complete."
 
         # Sleep for 60 seconds before running the next iteration
@@ -86,7 +85,7 @@ if $springboot_test; then
 fi
 
 end_time=$(date +%s)
-execution_time=$((end_time - start_time))
-echo "Total Execution time: $execution_time seconds"
+execution_time=$(( (end_time - start_time) / 60 ))
+echo "Total Execution time: $execution_time minutes"
 
 exit 0
