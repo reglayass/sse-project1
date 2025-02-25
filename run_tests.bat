@@ -54,7 +54,7 @@ for /L %%i in (1,1,%iterations%) do (
     echo Test Iteration: %%i
 
     echo Starting Energibridge for %framework%...
-    start /B cmd /c "sudo ./energibridge --output="%result_dir%\results_%framework%_%%i.csv" docker compose %framework% up > nul 2>&1"
+    start /B cmd /c "sudo ./energibridge --output="%result_dir%\results_%framework%_%%i.csv" docker compose up %framework% > nul 2>&1"
     
     REM Give it some time to build the container
     timeout /t 30 > nul

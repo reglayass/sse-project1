@@ -46,15 +46,16 @@ run_test() {
         mkdir -p "$result_dir"
     fi
 
-    # Run the test for the specified number of iterations
+    Run the test for the specified number of iterations
     for ((i=1; i<=iterations; i++)); do
         echo "Test Iteration: $i"
 
         echo "Starting Energibridge for $framework..."
-        sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose "$framework" up > /dev/null 2>&1 &
+        sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
         pid=$! # Capture the process ID of the energibridge background process
 
         # Give it some time to build the container
+        echo "Letting Docker start up..."
         sleep 30
 
         # Run artillery test
