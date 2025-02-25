@@ -1,23 +1,4 @@
 services:
-  db:
-    image: postgres:latest
-    container_name: imdb-postgres
-    restart: always
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=root
-    ports:
-      - "5432:5432" 
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - ./postgres/data:/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-  
   flask:
     build: ./flask
     container_name: imdb-flask
