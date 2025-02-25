@@ -42,31 +42,32 @@ run_test() {
 
     # Check if results directory exists
     if [ ! -d "$result_dir" ]; then
-        echo "Results directory for $framework does not exist. Creating it..."
+        echo -e "Results directory for $framework does not exist. Creating it...\n"
         mkdir -p "$result_dir"
     fi
 
-    Run the test for the specified number of iterations
+    # Run the test for the specified number of iterations
     for ((i=1; i<=iterations; i++)); do
-        echo "Test Iteration: $i"
+        echo -e "Test Iteration: $i\n"
 
-        echo "Starting Energibridge for $framework..."
-        sudo ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
+        echo -e "Starting Energibridge for $framework...\n"
+        ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
 
         # Give it some time to build the container
-        echo "Letting Docker start up..."
+        echo -e "Letting Docker start up...\n"
         sleep 15
 
         # Run artillery test
-        echo "Starting Artillery test for $framework..."
+        echo -e "Starting Artillery test for $framework...\n"
         artillery run --quiet "$test_file"
         # Artillery is done, kill the energibridge process
-        echo "Artillery done, killing process..."
-        pkill energibridge
-        echo "Iteration $i: Process cleanup complete."
+        echo -e "Artillery done, killing process...\n"
+        sudo pkill energibridge
+
+        echo -e "Iteration $i: Process cleanup complete.\n"
 
         # Sleep for 60 seconds before running the next iteration
-        echo "Sleeping for 1 min..."
+        echo -e "Sleeping for 1 min...\n"
         sleep 60
     done
 }
