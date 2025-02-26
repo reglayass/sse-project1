@@ -1,19 +1,19 @@
 services:
-  flask:
-    build: ./flask
-    container_name: imdb-flask
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=development
+  # flask:
+  #   build: ./flask
+  #   container_name: imdb-flask
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - FLASK_ENV=development
 
-  express:
-    build: ./express
-    container_name: imdb-express
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
+  # express:
+  #   build: ./express
+  #   container_name: imdb-express
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
 
   springboot:
     build: ./springboot
