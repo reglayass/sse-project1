@@ -53,19 +53,21 @@ run_test() {
     for ((i=1; i<=iterations; i++)); do
         echo -e "Test Iteration: $i\n"
 
-        echo -e "Starting Energibridge for $framework...\n"
-        echo "$password" | sudo -S ./energibridge -g --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" --remove-orphans > /dev/null 2>&1 &
-
+        echo -e "Starting framework...\n"
+        docker compose up "$framework" -d
         # Give it some time to build the container
         echo -e "Letting Docker start up...\n"
         sleep 15
 
         # Run artillery test
-        echo -e "Starting Artillery test for $framework...\n"
-        artillery run --quiet "$test_file"
+        echo -e "Starting test for $framework...\n"
+        echo "$password" | sudo -S ./energibridge -g --output="$result_dir/results_${framework}_${i}.csv" ab -c 2 -n 10000 "http://localhost:5000/filter?genre=Drama&rating=9&votes=100"
+
+        # Run artillery test
+        # echo -e "Starting Artillery test for $framework...\n"
+        # artillery run --quiet "$test_file"
         # Artillery is done, kill the energibridge process
-        echo -e "Artillery done, killing process...\n"
-        echo "$password" | sudo -S pkill artillery
+        echo -e "Test done.\n"
         docker compose down > /dev/null 2>&1
 
         echo -e "Iteration $i: Process cleanup complete.\n"
