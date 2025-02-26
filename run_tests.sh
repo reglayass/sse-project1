@@ -46,12 +46,15 @@ run_test() {
         mkdir -p "$result_dir"
     fi
 
+    # Prompt for password and store it in a variable
+    read -s -p "Enter your password: " password
+
     # Run the test for the specified number of iterations
     for ((i=1; i<=iterations; i++)); do
         echo -e "Test Iteration: $i\n"
 
         echo -e "Starting Energibridge for $framework...\n"
-        ./energibridge --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" > /dev/null 2>&1 &
+        echo "$password" | sudo -S ./energibridge -g --output="$result_dir/results_${framework}_${i}.csv" docker compose up "$framework" --remove-orphans > /dev/null 2>&1 &
 
         # Give it some time to build the container
         echo -e "Letting Docker start up...\n"
@@ -62,7 +65,8 @@ run_test() {
         artillery run --quiet "$test_file"
         # Artillery is done, kill the energibridge process
         echo -e "Artillery done, killing process...\n"
-        sudo pkill energibridge
+        echo "$password" | sudo -S pkill artillery
+        docker compose down > /dev/null 2>&1
 
         echo -e "Iteration $i: Process cleanup complete.\n"
 
