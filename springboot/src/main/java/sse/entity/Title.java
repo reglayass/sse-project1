@@ -1,7 +1,9 @@
 package sse.entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 public class Title {
 
@@ -13,9 +15,9 @@ public class Title {
     private Integer startYear;
     private Integer endYear;
     private Integer runtimeMinutes;
-    private String[] genres;
+    private List<String> genres;
 
-    public Title(String tconst, String titleType, String primaryTitle, String originalTitle, boolean isAdult, Integer startYear, Integer endYear, Integer runtimeMinutes, String[] genres) {
+    public Title(String tconst, String titleType, String primaryTitle, String originalTitle, boolean isAdult, Integer startYear, Integer endYear, Integer runtimeMinutes, List<String> genres) {
         this.tconst = tconst;
         this.titleType = titleType;
         this.primaryTitle = primaryTitle;
@@ -33,71 +35,39 @@ public class Title {
         return tconst;
     }
 
-    public void setTconst(String tconst) {
-        this.tconst = tconst;
-    }
-
     public String getTitleType() {
         return titleType;
-    }
-
-    public void setTitleType(String titleType) {
-        this.titleType = titleType;
     }
 
     public String getPrimaryTitle() {
         return primaryTitle;
     }
 
-    public void setPrimaryTitle(String primaryTitle) {
-        this.primaryTitle = primaryTitle;
-    }
-
     public String getOriginalTitle() {
         return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
     }
 
     public boolean isAdult() {
         return isAdult;
     }
 
-    public void setAdult(boolean isAdult) {
-        this.isAdult = isAdult;
-    }
-
     public Integer getStartYear() {
         return startYear;
-    }
-
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
     }
 
     public Integer getEndYear() {
         return endYear;
     }
 
-    public void setEndYear(Integer endYear) {
-        this.endYear = endYear;
-    }
-
     public Integer getRuntimeMinutes() {
         return runtimeMinutes;
     }
 
-    public void setRuntimeMinutes(Integer runtimeMinutes) {
-        this.runtimeMinutes = runtimeMinutes;
-    }
-
-    public String[] getGenres() {
+    public List<String> getGenres() {
         return genres;
     }
 
-    public void setGenres(String[] genres) {
+    public void setGenres(List<String> genres) {
         this.genres = genres;
     }
 
@@ -128,7 +98,7 @@ public class Title {
             Integer startYear = values[5].equals("\\N") ? null : Integer.parseInt(values[5]);
             Integer endYear = values[6].equals("\\N") ? null : Integer.parseInt(values[6]);
             Integer runtimeMinutes = values[7].equals("\\N") ? null : Integer.parseInt(values[7]);
-            String[] genres = values[8].split(",");
+            List<String> genres = Arrays.asList(values[8].split(","));
 
             return new Title(tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, genres);
         }

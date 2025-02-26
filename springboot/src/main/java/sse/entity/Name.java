@@ -2,6 +2,7 @@ package sse.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class Name {
 
@@ -9,10 +10,10 @@ public class Name {
     private String name;
     private Integer birthYear;
     private Integer deathYear;
-    private String[] primaryProfession;
-    private String[] knownForTitles;
+    private List<String> primaryProfession;
+    private List<String> knownForTitles;
 
-    public Name(String nconst, String name, Integer birthYear, Integer deathYear, String[] primaryProfession, String[] knownForTitles) {
+    public Name(String nconst, String name, Integer birthYear, Integer deathYear, List<String> primaryProfession, List<String> knownForTitles) {
         this.nconst = nconst;
         this.name = name;
         this.birthYear = birthYear;
@@ -25,45 +26,24 @@ public class Name {
         return nconst;
     }
 
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getBirthYear() {
         return birthYear;
     }
 
-    public void setBirthYear(Integer birthYear) {
-        this.birthYear = birthYear;
-    }
-
     public Integer getDeathYear() {
         return deathYear;
     }
 
-    public void setDeathYear(Integer deathYear) {
-        this.deathYear = deathYear;
-    }
-
-    public String[] getPrimaryProfession() {
+    public List<String> getPrimaryProfession() {
         return primaryProfession;
     }
 
-    public void setPrimaryProfession(String[] primaryProfession) {
-        this.primaryProfession = primaryProfession;
-    }
-
-    public String[] getKnownForTitles() {
+    public List<String> getKnownForTitles() {
         return knownForTitles;
-    }
-
-    public void setKnownForTitles(String[] knownForTitles) {
-        this.knownForTitles = knownForTitles;
     }
 
     // to_dict equivalent
