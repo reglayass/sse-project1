@@ -36,7 +36,7 @@ run_test() {
 
     # Run artillery test
     echo -e "Starting test for $framework...\n"
-    echo "$password" | sudo -S energibridge -g --output="$result_dir/results_${framework}_${iter}.csv" ab -c 150 -n 10000 "http://localhost:$port/filter?genre=Drama&rating=9&votes=100"
+    echo "$password" | sudo -S ./energibridge -g --output="$result_dir/results_${framework}_${iter}.csv" ab -c 150 -n 10000 "http://localhost:$port/filter?genre=Drama&rating=9&votes=100"
 
     echo -e "Test done for $framework.\n"
     docker compose down > /dev/null 2>&1
