@@ -1,47 +1,84 @@
 @echo off
-setlocal enabledelayedexpansion
 
 REM Default values
-set iterations=30
-set flask_test=false
-set express_test=false
-set springboot_test=false
+set "iterations=0"
+
+REM Enable delayed expansion
+setlocal enabledelayedexpansion
+
+REM Parse command-line options
+for %%i in (%*) do (
+    echo %%i | findstr /b /c:"--iter=" >nul
+    if /i "%%i" NEQ "" (
+        set "iterations=%%i"
+        set "iterations=!iterations:--iter=!"
+        echo Iterations: !iterations!
+    )
+)
+
+
+REM Ensure --iter argument is provided
+echo !iterations!
+if !iterations! == 0 (
+    call :usage
+)
+
+REM List of frameworks to test
+set "frameworks=flask express springboot"
+
+REM Start time recording
+for /f "tokens=1-3 delims=:." %%a in ("%time%") do (
+    set /a "start_time=(((%%a*60)+%%b)*60)+%%c"
+)
+
+REM Run the tests sequentially for each iteration
+for /l %%i in (1,1,%iterations%) do (
+    echo Test Iteration: %%i
+
+    REM Run tests for each framework
+    for %%f in (%frameworks%) do (
+        call :run_test %%f %%i
+        REM Sleep for 60 seconds before running the next framework
+        echo Sleeping for 1 min before next framework...
+        timeout /t 60 /nobreak >nul
+    )
+)
+
+REM End time recording
+for /f "tokens=1-3 delims=:." %%a in ("%time%") do (
+    set /a "end_time=(((%%a*60)+%%b)*60)+%%c"
+)
+
+REM Calculate execution time
+set /a "execution_time=(end_time - start_time) / 60"
+echo Total Execution time: %execution_time% minutes
+
+exit /b 0
+
+REM ---------------------------------------------
+REM FUNCTION DEFINITIONS
+REM ---------------------------------------------
 
 REM Function to display usage information
 :usage
-echo Usage: %0 --flask --express --springboot --iter=<number>
-exit /b 1
-
-REM Parse command-line options
-:parse_options
-if "%~1"=="" goto end_parse
-if "%~1"=="--flask" (
-    set flask_test=true
-) else if "%~1"=="--express" (
-    set express_test=true
-) else if "%~1"=="--springboot" (
-    set springboot_test=true
-) else if "%~1:~0,6%"=="--iter=" (
-    set iterations=%~1:~7%
-) else (
-    goto usage
-)
-shift
-goto parse_options
-
-:end_parse
-
-REM If no tests are specified, show usage
-if "%flask_test%"=="false" if "%express_test%"=="false" if "%springboot_test%"=="false" goto usage
-
-REM Install artillery as a package
-npm install
+    echo Usage: %0 --iter=^<number^>
+    exit /b
 
 REM Function to run tests
 :run_test
-set framework=%1
-set result_dir=tests\results\%framework%
-set test_file=tests\test_%framework%.yml
+set "framework=%~1"
+set "iter=%~2"
+set "result_dir=tests\results\%framework%"
+
+REM Assign ports based on the framework
+set "port="
+if "%framework%"=="flask" set "port=5000"
+if "%framework%"=="express" set "port=3000"
+if "%framework%"=="springboot" set "port=8080"
+if not defined port (
+    echo Unknown framework: %framework%
+    exit /b
+)
 
 REM Check if results directory exists
 if not exist "%result_dir%" (
@@ -49,37 +86,20 @@ if not exist "%result_dir%" (
     mkdir "%result_dir%"
 )
 
-REM Run the test for the specified number of iterations
-for /L %%i in (1,1,%iterations%) do (
-    echo Test Iteration: %%i
+REM Start the framework
+echo Starting framework: %framework%...
+docker-compose up %framework% -d
 
-    echo Starting Energibridge for %framework%...
-    start /B cmd /c "sudo ./energibridge --output="%result_dir%\results_%framework%_%%i.csv" docker compose up %framework% > nul 2>&1"
-    
-    REM Give it some time to build the container
-    timeout /t 30 > nul
+REM Give it some time to build the container
+echo Letting Docker start up...
+timeout /t 15 /nobreak >nul
 
-    REM Run artillery test
-    echo Starting Artillery test for %framework%...
-    artillery run "%test_file%" > nul 2>&1
-    
-    REM Artillery is done, kill the energibridge process
-    echo Artillery done, killing process...
-    taskkill /F /IM energibridge.exe > nul 2>&1
-    echo Iteration %%i: Process cleanup complete.
+REM Run artillery test
+echo Starting test for %framework%...
+energibridge.exe -g --output="%result_dir%\results_%framework%_%iter%.csv" ab.exe -c 150 -n 10000 "http://localhost:%port%/filter?genre=Drama&rating=9&votes=100"
 
-    REM Sleep for 60 seconds before running the next iteration
-    echo Sleeping for 1 min...
-    timeout /t 60 > nul
-)
+echo Test done for %framework%.
+docker-compose down >nul 2>&1
 
-goto :eof
-
-REM Run the selected tests
-if "%flask_test%"=="true" call :run_test "flask"
-if "%express_test%"=="true" call :run_test "express"
-if "%springboot_test%"=="true" call :run_test "springboot"
-
-echo All tests completed.
-
-exit
+echo Process cleanup complete for %framework%.
+exit /b
